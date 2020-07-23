@@ -5,44 +5,7 @@
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "token",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "2a8120a9-29ad-4d5e-8ade-660e2686ac6c",
-						"exec": [
-							"var jsonResp = pm.response.json();\r",
-							"postman.setGlobalVariable(\"token\",jsonResp(\"access_token\"));"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "grant_type=password&username=Ilya_Kabanov&password=Jage22128679!"
-				},
-				"url": {
-					"raw": "http://104.40.150.146/token",
-					"protocol": "http",
-					"host": [
-						"104",
-						"40",
-						"150",
-						"146"
-					],
-					"path": [
-						"token"
-					]
-				}
-			},
-			"response": []
-		},
+		
 		{
 			"name": "Посмотреть информацию о себе",
 			"event": [
