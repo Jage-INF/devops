@@ -1,49 +1,178 @@
 {
 	"info": {
-		"_postman_id": "a294daae-2078-4005-a061-36554afa695d",
-		"name": "Practice",
+		"_postman_id": "25f88ad7-a318-4cd8-936e-4462b7dc8ab5",
+		"name": "Practice CICD",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
-		
 		{
-			"name": "Посмотреть информацию о себе",
+			"name": "Create user",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "9c3374b4-d378-4d7d-9f0b-71cbe2bec414",
+						"id": "2d250673-e972-4ca1-bba3-e40b6084c13a",
 						"exec": [
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
-							"});\r",
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
+							"var jsonData = pm.response.json();",
+							"pm.globals.set(\"rndUserId\", jsonData.id);",
+							"",
+							"//Tests",
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "603fe4fb-9ae2-4a7a-a44e-340f02ba3b66",
+						"exec": [
+							"function getRandomInt(min, max) {\r",
+							"        min = Math.ceil(min);\r",
+							"        max = Math.floor(max);\r",
+							"        return Math.floor(Math.random() * (max - min)) + min;\r",
+							"}\r",
+							"\r",
+							"const val = getRandomInt(10000000,99999999);\r",
+							"pm.globals.set('rndUser', \"User\" + val);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Login\": \"{{rndUser}}\",\r\n  \"NativeName\": \"Test User\",\r\n  \"Password\": \"12345\",\r\n  \"ConfirmPassword\": \"12345\"\r\n}"
+				},
+				"url": {
+					"raw": "104.40.150.146/api/user",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0a3a0565-33e1-4800-a4dd-da5d65b3bfb4",
+						"exec": [
+							"var jsonResp = pm.response.json();",
+							"postman.setEnvironmentVariable(\"token\", jsonResp[\"access_token\"]);",
+							"",
+							"pm.test(\"Json contains valid Message\", function() {",
+							"    pm.expect(jsonResp.token_type).to.contain(\"bearer\")",
 							"});"
 						],
 						"type": "text/javascript"
 					}
 				}
 			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"Id\": \"string\",\r\n  \"Login\": \"string\",\r\n  \"NativeName\": \"string\",\r\n  \"Role\": 0\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
 					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{rndUser}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "text"
+						}
+					]
 				},
 				"url": {
-					"raw": "http://104.40.150.146/api/me",
-					"protocol": "http",
+					"raw": "104.40.150.146/token",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Me",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dd4b77b8-5937-4d1e-8dd5-77a2729c42b7",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "104.40.150.146/api/me",
 					"host": [
 						"104",
 						"40",
@@ -59,19 +188,125 @@
 			"response": []
 		},
 		{
-			"name": "Обновить информацию о себе",
+			"name": "update user info",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "3e7a74ac-1012-4961-b352-c0bb245a7da7",
+						"id": "d853a2d1-5c78-4e74-9c8e-229517561a43",
 						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"NativeName\": \"Test User Updated\",\r\n  \"Role\": 0,\r\n  \"OldPassword\": \"12345\",\r\n  \"Password\": \"123456\",\r\n  \"ConfirmPassword\": \"123456\"\r\n}"
+				},
+				"url": {
+					"raw": "104.40.150.146/api/user/{{rndUserId}}",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"user",
+						"{{rndUserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "209e5c22-f7cd-47fe-a837-c8b25e533af4",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Login\": \"Swift1\",\r\n  \"NativeName\": \"Test User\",\r\n  \"Password\": \"12345\",\r\n  \"ConfirmPassword\": \"12345\"\r\n}"
+				},
+				"url": {
+					"raw": "104.40.150.146/api/user/{{rndUserId}}",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"user",
+						"{{rndUserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get maps",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0460f4a2-ed31-42c1-b5ee-c2969ab3d165",
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.globals.set(\"mapId\", jsonData[0].id);\r",
+							"\r",
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"The request is invalid.\");\r",
 							"});\r",
 							""
 						],
@@ -80,162 +315,22 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"NativeName\": \"Ilya_Kabanov\",\r\n  \"Role\": 0,\r\n  \"OldPassword\": \"Jage22128679!\",\r\n  \"Password\": \"Jage22128679\",\r\n  \"ConfirmPassword\": \"Jage22128679\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://104.40.150.146/api/user/33a640d1e4104eb8bf2227a03da71dcb",
-					"protocol": "http",
-					"host": [
-						"104",
-						"40",
-						"150",
-						"146"
-					],
-					"path": [
-						"api",
-						"user",
-						"33a640d1e4104eb8bf2227a03da71dcb"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Получить информацию о пользователе",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "45bd7544-0020-4e8c-9ea1-8e609ada5798",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"pm.test(\"Response time is less than 200ms\", function () {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
-							"});\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"Id\": \"string\",\r\n  \"Login\": \"string\",\r\n  \"NativeName\": \"string\",\r\n  \"Role\": 0\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
 					}
-				},
+				],
 				"url": {
-					"raw": "http://104.40.150.146/api/user/33a640d1e4104eb8bf2227a03da71dcb",
-					"protocol": "http",
-					"host": [
-						"104",
-						"40",
-						"150",
-						"146"
-					],
-					"path": [
-						"api",
-						"user",
-						"33a640d1e4104eb8bf2227a03da71dcb"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Получить список карт(map)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "a5fc907f-9478-4f72-aac6-77ad522e7aa7",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"pm.test(\"Response time is less than 200ms\", function () {\r",
-							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
-							"});\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"The request is invalid.\");\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "[\r\n  {\r\n    \"Id\": \"string\",\r\n    \"Name\": \"string\",\r\n    \"Owner\": {\r\n      \"Id\": \"string\",\r\n      \"Login\": \"string\",\r\n      \"NativeName\": \"string\",\r\n      \"Role\": 0\r\n    },\r\n    \"Width\": 0,\r\n    \"Height\": 0,\r\n    \"PoliceCount\": 0,\r\n    \"ThiefCount\": 0\r\n  }\r\n]",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://104.40.150.146/api/map",
-					"protocol": "http",
+					"raw": "104.40.150.146/api/map",
 					"host": [
 						"104",
 						"40",
@@ -251,19 +346,74 @@
 			"response": []
 		},
 		{
-			"name": "Создать игру",
+			"name": "get maps(s)",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "871ed490-9ad9-4317-9f11-1afb41e5463e",
+						"id": "7475f677-23f8-4ab9-849d-cff1d7020e18",
 						"exec": [
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Unable to find the map by the identifier.\");\r",
-							"});\r",
+							"var jsonData = pm.response.json();\r",
+							"pm.globals.set(\"mapId\", jsonData[0].id);\r",
+							"\r",
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Name\": \"123\",\r\n  \"MapId\": \"string\",\r\n  \"SwitchTimeout\": 0,\r\n  \"StartupTeamLives\": 0,\r\n  \"PoliceSpeed\": 0,\r\n  \"ThiefSpeed\": 0\r\n}"
+				},
+				"url": {
+					"raw": "104.40.150.146/api/maps",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"maps"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Maps by user id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d42cacd2-43af-4945-8adf-550463d85962",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -271,20 +421,91 @@
 				}
 			],
 			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"Name\": \"test\",\r\n  \"MapId\": \"945355dcee4a4e3ab983c93a94e147e6\",\r\n  \"SwitchTimeout\": 0,\r\n  \"StartupTeamLives\": 1,\r\n  \"PoliceSpeed\": 1,\r\n  \"ThiefSpeed\": 2\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "104.40.150.146/api/user/{{rndUserId}}/maps",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"user",
+						"{{rndUserId}}",
+						"maps"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create game",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e2bd1d6d-f07b-4542-b1c5-a68a034fd8a4",
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.globals.set(\"gameId\", jsonData.id);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
 					}
 				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "6538638f-3945-4b94-99aa-03f49dbb70cd",
+						"exec": [
+							"function getRandomInt(min, max) {\r",
+							"        min = Math.ceil(min);\r",
+							"        max = Math.floor(max);\r",
+							"        return Math.floor(Math.random() * (max - min)) + min;\r",
+							"}\r",
+							"\r",
+							"const val = getRandomInt(10,99);\r",
+							"pm.globals.set('rndGameName', \"Game\" + val);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Name\": \"{{rndUser}}{{rndGameName}}\",\r\n  \"MapId\": \"{{mapId}}\",\r\n  \"SwitchTimeout\": 10,\r\n  \"StartupTeamLives\": 2,\r\n  \"PoliceSpeed\": 1,\r\n  \"ThiefSpeed\": 1\r\n}"
+				},
 				"url": {
-					"raw": "http://104.40.150.146/api/game",
-					"protocol": "http",
+					"raw": "104.40.150.146/api/game",
 					"host": [
 						"104",
 						"40",
@@ -300,20 +521,17 @@
 			"response": []
 		},
 		{
-			"name": "Получить список игр(games)",
+			"name": "get games",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "13d306ef-30aa-44f1-9428-98e56e660f71",
+						"id": "403e8816-09e0-4ab5-8e9b-beb1a1953c81",
 						"exec": [
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
-							"});\r",
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
-							"});"
+							"});\r",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -323,30 +541,137 @@
 				"disableBodyPruning": true
 			},
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+					"raw": "{\r\n  \"Name\": \"{{rndUser}}{{rndGameName}}\",\r\n  \"MapId\": \"string\",\r\n  \"SwitchTimeout\": 0,\r\n  \"StartupTeamLives\": 0,\r\n  \"PoliceSpeed\": 0,\r\n  \"ThiefSpeed\": 0\r\n}"
 				},
 				"url": {
-					"raw": "http://104.40.150.146/api/games?start=1&count=3",
-					"protocol": "http",
+					"raw": "104.40.150.146/api/game",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"game"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get game by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "edee6fda-fc5a-4f32-b41f-c7c49add1dcb",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Name\": \"123\",\r\n  \"MapId\": \"string\",\r\n  \"SwitchTimeout\": 0,\r\n  \"StartupTeamLives\": 0,\r\n  \"PoliceSpeed\": 0,\r\n  \"ThiefSpeed\": 0\r\n}"
+				},
+				"url": {
+					"raw": "104.40.150.146/api/game/{{gameId}}",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"game",
+						"{{gameId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get games of user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "00f59591-8d81-4e78-985e-5ea7c9b24750",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "IShipAuthToken={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Name\": \"{{rndUser}}{{rndGameName}}\",\r\n  \"MapId\": \"string\",\r\n  \"SwitchTimeout\": 0,\r\n  \"StartupTeamLives\": 0,\r\n  \"PoliceSpeed\": 0,\r\n  \"ThiefSpeed\": 0\r\n}"
+				},
+				"url": {
+					"raw": "104.40.150.146/api/games?start=1&count=1",
 					"host": [
 						"104",
 						"40",
@@ -364,122 +689,7 @@
 						},
 						{
 							"key": "count",
-							"value": "3"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Получить информацию о конкретной игре",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "a1d8bc98-f1d7-4dce-a801-9e194efa4564",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"The request is invalid.\");\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://104.40.150.146/api/game/",
-					"protocol": "http",
-					"host": [
-						"104",
-						"40",
-						"150",
-						"146"
-					],
-					"path": [
-						"api",
-						"game",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Получить информацию о играх пользователя(game)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "7d67835d-3584-46da-824f-38c501fe88f2",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"Start\": 0,\r\n  \"Entities\": [\r\n    {\r\n      \"Id\": \"string\",\r\n      \"Name\": \"string\",\r\n      \"Owner\": {\r\n        \"Id\": \"string\",\r\n        \"Login\": \"string\",\r\n        \"NativeName\": \"string\",\r\n        \"Role\": 0\r\n      },\r\n      \"Status\": 0,\r\n      \"CreatedAtUTC\": \"2020-07-21T17:40:22.508Z\",\r\n      \"StartedAtUTC\": \"2020-07-21T17:40:22.508Z\",\r\n      \"Time\": 0,\r\n      \"SwitchTimeout\": 0,\r\n      \"MillisecodsToSwitch\": 0,\r\n      \"MaxTeamSize\": 0,\r\n      \"Team1Stats\": {\r\n        \"TeamId\": \"string\",\r\n        \"Name\": \"string\",\r\n        \"Role\": 0,\r\n        \"Size\": 0,\r\n        \"CurrentSize\": 0,\r\n        \"CoinsCollected\": 0,\r\n        \"LivesCollected\": 0,\r\n        \"CurrentLives\": 0,\r\n        \"Deaths\": 0,\r\n        \"Winner\": true,\r\n        \"PlayerStats\": [\r\n          {\r\n            \"UserId\": \"string\",\r\n            \"Login\": \"string\",\r\n            \"CoinsCollected\": 0,\r\n            \"LivesCollected\": 0,\r\n            \"Deaths\": 0,\r\n            \"Alive\": true,\r\n            \"Connected\": true,\r\n            \"Location\": {\r\n              \"X\": 0,\r\n              \"Y\": 0\r\n            }\r\n          }\r\n        ]\r\n      },\r\n      \"Team2Stats\": {\r\n        \"TeamId\": \"string\",\r\n        \"Name\": \"string\",\r\n        \"Role\": 0,\r\n        \"Size\": 0,\r\n        \"CurrentSize\": 0,\r\n        \"CoinsCollected\": 0,\r\n        \"LivesCollected\": 0,\r\n        \"CurrentLives\": 0,\r\n        \"Deaths\": 0,\r\n        \"Winner\": true,\r\n        \"PlayerStats\": [\r\n          {\r\n            \"UserId\": \"string\",\r\n            \"Login\": \"string\",\r\n            \"CoinsCollected\": 0,\r\n            \"LivesCollected\": 0,\r\n            \"Deaths\": 0,\r\n            \"Alive\": true,\r\n            \"Connected\": true,\r\n            \"Location\": {\r\n              \"X\": 0,\r\n              \"Y\": 0\r\n            }\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  ],\r\n  \"Count\": 0\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://104.40.150.146/api/game?start=1&count=12",
-					"protocol": "http",
-					"host": [
-						"104",
-						"40",
-						"150",
-						"146"
-					],
-					"path": [
-						"api",
-						"game"
-					],
-					"query": [
-						{
-							"key": "start",
 							"value": "1"
-						},
-						{
-							"key": "count",
-							"value": "12"
 						}
 					]
 				}
@@ -487,20 +697,17 @@
 			"response": []
 		},
 		{
-			"name": "Удалить игру",
+			"name": "Delete game",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
-						"id": "ad26f440-834d-4faf-8374-7f2370656812",
+						"id": "d9e04db2-3771-449d-9825-efbef73bcefd",
 						"exec": [
 							"pm.test(\"Status code is 202\", function () {\r",
 							"    pm.response.to.have.status(202);\r",
 							"});\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
-							"});"
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -508,10 +715,25 @@
 			],
 			"request": {
 				"method": "DELETE",
-				"header": [],
+				"header": [
+					{
+						"key": "Cookie",
+						"type": "text",
+						"value": "IShipAuthToken={{token}}"
+					},
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Name\": \"{{rndUser}}{{rndGameName}}\",\r\n  \"MapId\": \"string\",\r\n  \"SwitchTimeout\": 0,\r\n  \"StartupTeamLives\": 0,\r\n  \"PoliceSpeed\": 0,\r\n  \"ThiefSpeed\": 0\r\n}"
+				},
 				"url": {
-					"raw": "http://104.40.150.146/api/game/",
-					"protocol": "http",
+					"raw": "104.40.150.146/api/game/{{gameId}}",
 					"host": [
 						"104",
 						"40",
@@ -521,123 +743,7 @@
 					"path": [
 						"api",
 						"game",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Получить список карт(maps)",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "201ec4c0-a3ad-4140-96ca-0a2a8839ce08",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "[\r\n  {\r\n    \"Id\": \"string\",\r\n    \"Name\": \"string\",\r\n    \"Owner\": {\r\n      \"Id\": \"string\",\r\n      \"Login\": \"string\",\r\n      \"NativeName\": \"string\",\r\n      \"Role\": 0\r\n    },\r\n    \"Width\": 0,\r\n    \"Height\": 0,\r\n    \"PoliceCount\": 0,\r\n    \"ThiefCount\": 0\r\n  }\r\n]",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://104.40.150.146/api/maps",
-					"protocol": "http",
-					"host": [
-						"104",
-						"40",
-						"150",
-						"146"
-					],
-					"path": [
-						"api",
-						"maps"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Получить список карт пользователя",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "8eb51435-6b1d-413b-9123-93059a60facd",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
-							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "[\r\n  {\r\n    \"Id\": \"string\",\r\n    \"Name\": \"string\",\r\n    \"Owner\": {\r\n      \"Id\": \"string\",\r\n      \"Login\": \"string\",\r\n      \"NativeName\": \"string\",\r\n      \"Role\": 0\r\n    },\r\n    \"Width\": 0,\r\n    \"Height\": 0,\r\n    \"PoliceCount\": 0,\r\n    \"ThiefCount\": 0\r\n  }\r\n]",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://104.40.150.146/api/user/33a640d1e4104eb8bf2227a03da71dcb/maps",
-					"protocol": "http",
-					"host": [
-						"104",
-						"40",
-						"150",
-						"146"
-					],
-					"path": [
-						"api",
-						"user",
-						"33a640d1e4104eb8bf2227a03da71dcb",
-						"maps"
+						"{{gameId}}"
 					]
 				}
 			},
@@ -649,7 +755,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAAD1PiuPA22nhftm4yXFuQ1Ugi-kUkhSOlHoBZ8t4-6_vwAAAAAOgAAAAAIAACAAAADYGepm0-Z--uZDe0uV7Sg2Ub9neUesbbFjUHrIjprtxjABAACc6CDwddIPWA7BbBP3D6LI_xQdL-fQzsU03MrQA0Auk4_CSCMjWYUB0kPd4jUxH0O9IzEIfQKRHwO6oWCvwoe8xkqV1v1UFYjXqbIGoPnEhIfmMAvf38EUwzBT08-LsGSg70nzxnJzwRHOvE3EmZPQC1DKK3XkG2oHW6aqG4ymBxFiOiVNVItN0Z75baImKtzcLY0b6KTt_GHI9Y34rWwitL2ife7wrVfd4dcLtJedbwc5zAOFGX6cBo3wXnXAvt3eCG-aNlqhulaWDc_U5qznEe4-ZhWTraAizV2TShCX8Rb0VqWf4PmmuKxl3tuWE9WAnbPTN0_8RP1HGwodFPk1ibgiwrt768QgyA71rUHNhfe9LDLSUm8eJz_NGWvQzpsdDKQusg1i4aFTt1uJ5hTCQAAAAEWYc_Aur5JyRt8PcYErDtLwlztxRV2UblJuYtNBfPtvcGaP8EnhqH_ubsLgpqT4qOl_HWKkhTI65Gwbpl3JvG8",
+				"value": "{{token}}",
 				"type": "string"
 			}
 		]
@@ -658,7 +764,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "656de05a-e77b-433b-8a8c-d1cbb58c95e7",
+				"id": "2f169e04-6cae-47c7-8fc7-624222d885fe",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -668,7 +774,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "f2827537-db8c-4910-a59e-cf1b87ee0704",
+				"id": "e564adcf-6008-4623-a72d-805625013869",
 				"type": "text/javascript",
 				"exec": [
 					""
