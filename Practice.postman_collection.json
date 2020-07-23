@@ -1,0 +1,768 @@
+{
+	"info": {
+		"_postman_id": "a294daae-2078-4005-a061-36554afa695d",
+		"name": "Practice",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Зарегистрировать пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "98a17b4f-153f-4717-8b4e-c920bc839acf",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"An error has occurred.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Login\": \"Ilya_Kabanov\",\r\n  \"NativeName\": \"Ilya Kabanov\",\r\n  \"Password\": \"Jage22128679!\",\r\n  \"ConfirmPassword\": \"Jage22128679!\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/user",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2a8120a9-29ad-4d5e-8ade-660e2686ac6c",
+						"exec": [
+							"var jsonResp = pm.response.json();\r",
+							"postman.setGlobalVariable(\"token\",jsonResp(\"access_token\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "grant_type=password&username=Ilya_Kabanov&password=Jage22128679!"
+				},
+				"url": {
+					"raw": "http://104.40.150.146/token",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Посмотреть информацию о себе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9c3374b4-d378-4d7d-9f0b-71cbe2bec414",
+						"exec": [
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
+							"});\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Id\": \"string\",\r\n  \"Login\": \"string\",\r\n  \"NativeName\": \"string\",\r\n  \"Role\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/me",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Обновить информацию о себе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3e7a74ac-1012-4961-b352-c0bb245a7da7",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"The request is invalid.\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"NativeName\": \"Ilya_Kabanov\",\r\n  \"Role\": 0,\r\n  \"OldPassword\": \"Jage22128679!\",\r\n  \"Password\": \"Jage22128679\",\r\n  \"ConfirmPassword\": \"Jage22128679\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/user/33a640d1e4104eb8bf2227a03da71dcb",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"user",
+						"33a640d1e4104eb8bf2227a03da71dcb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить информацию о пользователе",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "45bd7544-0020-4e8c-9ea1-8e609ada5798",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Id\": \"string\",\r\n  \"Login\": \"string\",\r\n  \"NativeName\": \"string\",\r\n  \"Role\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/user/33a640d1e4104eb8bf2227a03da71dcb",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"user",
+						"33a640d1e4104eb8bf2227a03da71dcb"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить список карт(map)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a5fc907f-9478-4f72-aac6-77ad522e7aa7",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Response time is less than 200ms\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"The request is invalid.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"Id\": \"string\",\r\n    \"Name\": \"string\",\r\n    \"Owner\": {\r\n      \"Id\": \"string\",\r\n      \"Login\": \"string\",\r\n      \"NativeName\": \"string\",\r\n      \"Role\": 0\r\n    },\r\n    \"Width\": 0,\r\n    \"Height\": 0,\r\n    \"PoliceCount\": 0,\r\n    \"ThiefCount\": 0\r\n  }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/map",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"map"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Создать игру",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "871ed490-9ad9-4317-9f11-1afb41e5463e",
+						"exec": [
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Unable to find the map by the identifier.\");\r",
+							"});\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Name\": \"test\",\r\n  \"MapId\": \"945355dcee4a4e3ab983c93a94e147e6\",\r\n  \"SwitchTimeout\": 0,\r\n  \"StartupTeamLives\": 1,\r\n  \"PoliceSpeed\": 1,\r\n  \"ThiefSpeed\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/game",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"game"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить список игр(games)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "13d306ef-30aa-44f1-9428-98e56e660f71",
+						"exec": [
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
+							"});\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/games?start=1&count=3",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"games"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "1"
+						},
+						{
+							"key": "count",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить информацию о конкретной игре",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a1d8bc98-f1d7-4dce-a801-9e194efa4564",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"The request is invalid.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/game/",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"game",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить информацию о играх пользователя(game)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7d67835d-3584-46da-824f-38c501fe88f2",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"Start\": 0,\r\n  \"Entities\": [\r\n    {\r\n      \"Id\": \"string\",\r\n      \"Name\": \"string\",\r\n      \"Owner\": {\r\n        \"Id\": \"string\",\r\n        \"Login\": \"string\",\r\n        \"NativeName\": \"string\",\r\n        \"Role\": 0\r\n      },\r\n      \"Status\": 0,\r\n      \"CreatedAtUTC\": \"2020-07-21T17:40:22.508Z\",\r\n      \"StartedAtUTC\": \"2020-07-21T17:40:22.508Z\",\r\n      \"Time\": 0,\r\n      \"SwitchTimeout\": 0,\r\n      \"MillisecodsToSwitch\": 0,\r\n      \"MaxTeamSize\": 0,\r\n      \"Team1Stats\": {\r\n        \"TeamId\": \"string\",\r\n        \"Name\": \"string\",\r\n        \"Role\": 0,\r\n        \"Size\": 0,\r\n        \"CurrentSize\": 0,\r\n        \"CoinsCollected\": 0,\r\n        \"LivesCollected\": 0,\r\n        \"CurrentLives\": 0,\r\n        \"Deaths\": 0,\r\n        \"Winner\": true,\r\n        \"PlayerStats\": [\r\n          {\r\n            \"UserId\": \"string\",\r\n            \"Login\": \"string\",\r\n            \"CoinsCollected\": 0,\r\n            \"LivesCollected\": 0,\r\n            \"Deaths\": 0,\r\n            \"Alive\": true,\r\n            \"Connected\": true,\r\n            \"Location\": {\r\n              \"X\": 0,\r\n              \"Y\": 0\r\n            }\r\n          }\r\n        ]\r\n      },\r\n      \"Team2Stats\": {\r\n        \"TeamId\": \"string\",\r\n        \"Name\": \"string\",\r\n        \"Role\": 0,\r\n        \"Size\": 0,\r\n        \"CurrentSize\": 0,\r\n        \"CoinsCollected\": 0,\r\n        \"LivesCollected\": 0,\r\n        \"CurrentLives\": 0,\r\n        \"Deaths\": 0,\r\n        \"Winner\": true,\r\n        \"PlayerStats\": [\r\n          {\r\n            \"UserId\": \"string\",\r\n            \"Login\": \"string\",\r\n            \"CoinsCollected\": 0,\r\n            \"LivesCollected\": 0,\r\n            \"Deaths\": 0,\r\n            \"Alive\": true,\r\n            \"Connected\": true,\r\n            \"Location\": {\r\n              \"X\": 0,\r\n              \"Y\": 0\r\n            }\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  ],\r\n  \"Count\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/game?start=1&count=12",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"game"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "1"
+						},
+						{
+							"key": "count",
+							"value": "12"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Удалить игру",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ad26f440-834d-4faf-8374-7f2370656812",
+						"exec": [
+							"pm.test(\"Status code is 202\", function () {\r",
+							"    pm.response.to.have.status(202);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://104.40.150.146/api/game/",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"game",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить список карт(maps)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "201ec4c0-a3ad-4140-96ca-0a2a8839ce08",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"Id\": \"string\",\r\n    \"Name\": \"string\",\r\n    \"Owner\": {\r\n      \"Id\": \"string\",\r\n      \"Login\": \"string\",\r\n      \"NativeName\": \"string\",\r\n      \"Role\": 0\r\n    },\r\n    \"Width\": 0,\r\n    \"Height\": 0,\r\n    \"PoliceCount\": 0,\r\n    \"ThiefCount\": 0\r\n  }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/maps",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"maps"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получить список карт пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8eb51435-6b1d-413b-9123-93059a60facd",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Authorization has been denied for this request.\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAABkAmucKZtUMP-OHUhjOE8qXY8bgO48lphy6e9ShfUcVAAAAAAOgAAAAAIAACAAAAC_XJLh7G_y2Qvw0MS7ZMAE-l6ToyM3VFYoQRQsSOzP-BABAADxiTST8EPz15wOuKJWk9I5uz5FPHAVWH7TMhcPiNKkSoNrYJAOcCVgi-4ReScrQabQGs41lE7ZyrFclETNKMn_px7_XACagH1t84OneGMh7SHp9TK5KocGlkVivG1ZeegWSzqlvmSLtaV3Rnb6FocsgVPH87pw66YNyphUkqqqHQ2sx6GLvMAmeqPlyc925GnKnPitolMugt1BQSG2qO0264Z0m81YSOuHKnq1F2EmqHNS-ptckjirspwvR2_U8OUwZe8ytbj1HB4d2uyddK7IJkhqMwfPmR70XTZnxMZva8tOq8Mx3zel4iNCaQpWMYAdovzH0BWyYGsQJyxpAdmj8N2eRVvwc2DlEr6zAVekikAAAADh2DDnOLZUofF5gI0-99DpX5159o3XSCHJEnaBl2fh4ghJzV1HEOH9GIWTncP1abK6QZksUVrWFJoB9C4918OH",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"Id\": \"string\",\r\n    \"Name\": \"string\",\r\n    \"Owner\": {\r\n      \"Id\": \"string\",\r\n      \"Login\": \"string\",\r\n      \"NativeName\": \"string\",\r\n      \"Role\": 0\r\n    },\r\n    \"Width\": 0,\r\n    \"Height\": 0,\r\n    \"PoliceCount\": 0,\r\n    \"ThiefCount\": 0\r\n  }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://104.40.150.146/api/user/33a640d1e4104eb8bf2227a03da71dcb/maps",
+					"protocol": "http",
+					"host": [
+						"104",
+						"40",
+						"150",
+						"146"
+					],
+					"path": [
+						"api",
+						"user",
+						"33a640d1e4104eb8bf2227a03da71dcb",
+						"maps"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "AQAAANCMnd8BFdERjHoAwE_Cl-sBAAAAAZ-KQx9Y8kGFX7ItjR4uNgAAAAACAAAAAAAQZgAAAAEAACAAAAD1PiuPA22nhftm4yXFuQ1Ugi-kUkhSOlHoBZ8t4-6_vwAAAAAOgAAAAAIAACAAAADYGepm0-Z--uZDe0uV7Sg2Ub9neUesbbFjUHrIjprtxjABAACc6CDwddIPWA7BbBP3D6LI_xQdL-fQzsU03MrQA0Auk4_CSCMjWYUB0kPd4jUxH0O9IzEIfQKRHwO6oWCvwoe8xkqV1v1UFYjXqbIGoPnEhIfmMAvf38EUwzBT08-LsGSg70nzxnJzwRHOvE3EmZPQC1DKK3XkG2oHW6aqG4ymBxFiOiVNVItN0Z75baImKtzcLY0b6KTt_GHI9Y34rWwitL2ife7wrVfd4dcLtJedbwc5zAOFGX6cBo3wXnXAvt3eCG-aNlqhulaWDc_U5qznEe4-ZhWTraAizV2TShCX8Rb0VqWf4PmmuKxl3tuWE9WAnbPTN0_8RP1HGwodFPk1ibgiwrt768QgyA71rUHNhfe9LDLSUm8eJz_NGWvQzpsdDKQusg1i4aFTt1uJ5hTCQAAAAEWYc_Aur5JyRt8PcYErDtLwlztxRV2UblJuYtNBfPtvcGaP8EnhqH_ubsLgpqT4qOl_HWKkhTI65Gwbpl3JvG8",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "656de05a-e77b-433b-8a8c-d1cbb58c95e7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "f2827537-db8c-4910-a59e-cf1b87ee0704",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
