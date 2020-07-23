@@ -6,57 +6,6 @@
 	},
 	"item": [
 		{
-			"name": "Зарегистрировать пользователя",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "98a17b4f-153f-4717-8b4e-c920bc839acf",
-						"exec": [
-							"pm.test(\"Status code is 201\", function () {\r",
-							"    pm.response.to.have.status(201);\r",
-							"});\r",
-							"\r",
-							"\r",
-							"pm.test(\"Your test name\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData.message).to.eql(\"An error has occurred.\");\r",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"Login\": \"Ilya_Kabanov\",\r\n  \"NativeName\": \"Ilya Kabanov\",\r\n  \"Password\": \"Jage22128679!\",\r\n  \"ConfirmPassword\": \"Jage22128679!\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://104.40.150.146/api/user",
-					"protocol": "http",
-					"host": [
-						"104",
-						"40",
-						"150",
-						"146"
-					],
-					"path": [
-						"api",
-						"user"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "token",
 			"event": [
 				{
